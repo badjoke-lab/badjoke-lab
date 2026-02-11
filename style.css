@@ -1,0 +1,114 @@
+:root{
+  --bg:#000;
+  --fg:#fff;
+  --muted:rgba(255,255,255,.82);
+  --muted2:rgba(255,255,255,.62);
+  --focus:rgba(255,255,255,.85);
+}
+
+*{ box-sizing:border-box; }
+html,body{ height:100%; }
+body{
+  margin:0;
+  background:var(--bg);
+  color:var(--fg);
+  font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+}
+
+.wrap{
+  min-height:100vh;
+  display:flex;
+  flex-direction:column;
+}
+
+.center{
+  flex:1;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  padding:24px;
+  text-align:center;
+  max-width:560px;
+  margin:0 auto;
+}
+
+.brand{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:12px;
+  margin-bottom:12px;
+}
+
+.logo{
+  width:48px;
+  height:48px;
+  display:block;
+}
+
+.title{
+  margin:0;
+  font-size:32px;
+  font-weight:600;
+  letter-spacing:0.02em;
+  line-height:1.1;
+}
+
+.copy{
+  margin:0 0 22px 0;
+  font-size:15px;
+  color:var(--muted);
+  line-height:1.4;
+}
+
+.links ul{
+  list-style:none;
+  padding:0;
+  margin:0;
+}
+
+.links li{
+  margin:10px 0;
+}
+
+a{
+  color:rgba(255,255,255,.92);
+  text-decoration:none;
+}
+
+a:hover,
+a:focus-visible{
+  text-decoration:underline;
+  text-underline-offset:4px;
+}
+
+a:focus-visible{
+  outline:2px solid var(--focus);
+  outline-offset:4px;
+  border-radius:4px;
+}
+
+.contact{
+  margin-top:22px;
+  font-size:13px;
+  color:var(--muted2);
+}
+
+.footer{
+  padding:18px 24px;
+  display:flex;
+  justify-content:center;
+}
+
+.copyright{
+  font-size:12px;
+  color:rgba(255,255,255,.55);
+}
+
+/* Mobile */
+@media (max-width:480px){
+  .logo{ width:40px; height:40px; }
+  .title{ font-size:28px; }
+  .copy{ font-size:14px; }
+}
