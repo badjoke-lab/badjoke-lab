@@ -1,0 +1,38 @@
+name: Verify Production Hub
+
+on:
+  pull_request:
+    paths:
+      - ".github/workflows/verify-production.yml"
+      - "index.html"
+  workflow_dispatch:
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Verify CYA and BIR project cards
+        shell: bash
+        run: |
+          set -euo pipefail
+          origin="https://badjoke-lab.com/"
+
+          for attempt in $(seq 1 20); do
+            body="$(curl --fail --silent --show-error --location \
+              --header 'Cache-Control: no-cache' \
+              "${origin}?verify=${GITHUB_SHA}-${attempt}")"
+
+            if grep -Fq 'Crypto Yield Archive' <<<"$body" \
+              && grep -Fq 'https://cya.badjoke-lab.com/' <<<"$body" \
+              && grep -Fq 'Bridge Incident Registry' <<<"$body" \
+              && grep -Fq 'https://bir.badjoke-lab.com/' <<<"$body"; then
+              echo "Production hub contains the CYA and BIR cards on attempt ${attempt}."
+              exit 0
+            fi
+
+            echo "Attempt ${attempt}: production still lacks one or more required markers."
+            sleep 15
+          done
+
+          echo "Production hub did not publish the CYA and BIR cards within the verification window." >&2
+          exit 1
