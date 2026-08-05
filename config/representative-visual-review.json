@@ -1,0 +1,10 @@
+{
+  "site": "BadJoke-Lab Hub",
+  "devices": {
+    "desktop": { "width": 1440, "height": 1000 },
+    "mobile": { "width": 390, "height": 844, "isMobile": true, "hasTouch": true }
+  },
+  "pages": [
+    { "id": "home", "route": "/" }
+  ]
+}
