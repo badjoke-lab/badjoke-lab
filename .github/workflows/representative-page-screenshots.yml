@@ -1,0 +1,106 @@
+name: Representative page screenshots
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'index.html'
+      - 'style.css'
+      - 'logo.png'
+      - 'og/**'
+      - 'config/representative-visual-review.json'
+      - 'scripts/capture-representative-pages.mjs'
+      - '.github/workflows/representative-page-screenshots.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'index.html'
+      - 'style.css'
+      - 'logo.png'
+      - 'og/**'
+      - 'config/representative-visual-review.json'
+      - 'scripts/capture-representative-pages.mjs'
+      - '.github/workflows/representative-page-screenshots.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: hub-representative-screenshots-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  capture:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Install Playwright Chromium
+        run: |
+          npm init -y
+          npm install --no-save --ignore-scripts playwright@1.60.0
+          npx playwright install --with-deps chromium
+
+      - name: Start local site
+        run: |
+          python3 -m http.server 4173 --bind 127.0.0.1 > /tmp/hub-representative-server.log 2>&1 &
+          echo $! > /tmp/hub-representative-server.pid
+          for attempt in $(seq 1 30); do
+            if curl -fsS http://127.0.0.1:4173/ > /dev/null; then exit 0; fi
+            sleep 1
+          done
+          cat /tmp/hub-representative-server.log
+          exit 1
+
+      - name: Capture desktop and mobile representative pages
+        env:
+          CAPTURE_BASE_URL: http://127.0.0.1:4173
+        run: node scripts/capture-representative-pages.mjs
+
+      - name: Write visual review summary
+        if: always()
+        run: |
+          node --input-type=module <<'NODE'
+          import fs from 'node:fs'
+          const manifestPath = 'artifacts/representative-visual-review/manifest.json'
+          const lines = ['## BadJoke-Lab Hub representative visual review', '']
+          if (!fs.existsSync(manifestPath)) {
+            lines.push('- Manifest: missing')
+          } else {
+            const manifest = JSON.parse(fs.readFileSync(manifestPath, 'utf8'))
+            lines.push(`- States: ${manifest.captured_state_count}/${manifest.expected_state_count}`)
+            lines.push(`- Screenshots: ${manifest.screenshot_count}`)
+            lines.push(`- Failures: ${manifest.failure_count}`)
+            for (const record of manifest.records) {
+              lines.push(`- ${record.page_id} / ${record.device}: support-like links ${record.metrics.support_link_count}, initial viewport ${record.metrics.support_links_in_initial_viewport}`)
+            }
+          }
+          fs.appendFileSync(process.env.GITHUB_STEP_SUMMARY, `${lines.join('\n')}\n`)
+          NODE
+
+      - name: Upload representative visual review
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: hub-representative-page-screenshots-${{ github.run_id }}
+          path: |
+            artifacts/representative-visual-review/
+            /tmp/hub-representative-server.log
+          if-no-files-found: error
+          retention-days: 30
+          compression-level: 0
+
+      - name: Stop local site
+        if: always()
+        run: |
+          if test -f /tmp/hub-representative-server.pid; then
+            kill "$(cat /tmp/hub-representative-server.pid)" || true
+          fi
