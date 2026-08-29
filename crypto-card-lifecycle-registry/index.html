@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="description" content="Historical registry of crypto card programs and their underlying payment infrastructure.">
+  <title>Crypto Card Lifecycle Registry</title>
+  <link rel="stylesheet" href="./styles.css">
+  <link rel="stylesheet" href="./role-graph.css">
+  <link rel="stylesheet" href="./overview.css">
+  <link rel="stylesheet" href="./accessibility.css">
+</head>
+<body>
+  <a class="skip-link" href="#main-content">Skip to registry</a>
+  <header class="topbar">
+    <a class="brand" href="#/overview" aria-label="Crypto Card Lifecycle Registry overview"><span>CCLR</span><small>Crypto Card Lifecycle Registry</small></a>
+    <label class="search"><span aria-hidden="true">⌕</span><input id="search" type="search" placeholder="Find a program, provider, event…" autocomplete="off" aria-label="Find a card program or infrastructure provider"></label>
+    <nav aria-label="Primary"><button data-view="graph">Explore</button><button data-view="timeline">History</button><a href="./methodology.html">Methodology</a></nav>
+  </header>
+
+  <main id="main-content">
+    <section class="intro">
+      <p class="eyebrow">HISTORICAL INFRASTRUCTURE MAP</p>
+      <h1>Follow the card.<br><em>See what it depends on.</em></h1>
+      <p>Explore evidenced relationships between crypto card programs, issuers, processors, networks and infrastructure — then trace what changed over time.</p>
+    </section>
+
+    <section class="explorer" aria-label="Relationship explorer">
+      <div class="explorer-head">
+        <div><span class="live-dot" aria-hidden="true"></span><strong id="focus-label">Relationship field</strong></div>
+        <div class="explorer-modes" aria-label="Explorer modes">
+          <button id="overview-mode" type="button">Overview</button>
+          <button id="incident-mode" type="button">Incident atlas</button>
+          <button id="share-trail" type="button">Share trail</button>
+        </div>
+        <div class="legend" aria-label="Graph legend"><span class="program-key">Program</span><span class="provider-key">Infrastructure</span><span>Processor</span><span class="network-key">Network</span></div>
+      </div>
+      <div id="mode-note" class="mode-note" aria-live="polite"></div>
+      <div id="trail" class="trail" aria-live="polite"><span class="trail-empty">Select a relationship to start a trail.</span></div>
+      <div id="graph" class="graph" role="region" aria-label="Interactive crypto card relationship graph">
+        <div class="lane-guide lane-a" aria-hidden="true">PROGRAM</div><div class="lane-guide lane-b" aria-hidden="true">INFRASTRUCTURE</div><div class="lane-guide lane-c" aria-hidden="true">PROCESSING</div><div class="lane-guide lane-d" aria-hidden="true">NETWORK</div>
+        <svg id="edges" role="group" aria-label="Evidence-backed relationships"></svg>
+        <div id="nodes"></div>
+        <div id="empty" class="empty" hidden>No matching canonical records.</div>
+      </div>
+      <div id="mobile-paths" class="mobile-paths" aria-label="Relationship paths"></div>
+      <div id="incident-window" class="incident-window" hidden></div>
+      <div id="focus-strip" class="focus-strip" aria-live="polite"></div>
+    </section>
+
+    <section class="trace-section" id="history">
+      <div class="section-title"><div><p class="eyebrow">HISTORY TRACE</p><h2 id="trace-title">Material changes</h2></div><div id="filters" class="filters" aria-label="History filters"><button class="active" data-filter="all">All</button><button data-filter="incident">Incidents</button><button data-filter="change">Changes</button><button data-filter="remediation">Remediation</button></div></div>
+      <div id="trace" class="trace"></div>
+    </section>
+
+    <section class="evidence-section" id="evidence-path">
+      <div class="section-title"><div><p class="eyebrow">EVIDENCE PATH</p><h2>Why this connection exists</h2></div><p class="hint">Select a relationship or history point.</p></div>
+      <div id="evidence" class="evidence"><p>Select a node or event to inspect its canonical evidence.</p></div>
+    </section>
+  </main>
+
+  <dialog id="entity-dialog"><button class="close" aria-label="Close">×</button><div id="entity-detail"></div></dialog>
+  <footer><span>CCLR · historical registry, not a ranking or safety score</span><span><a href="./corrections.html">Corrections</a> · <a href="https://github.com/badjoke-lab/crypto-card-lifecycle-registry">GitHub ↗</a></span></footer>
+  <script type="module" src="./app.js"></script>
+</body>
+</html>
